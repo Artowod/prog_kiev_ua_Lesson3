@@ -1,6 +1,7 @@
 package ua.prog.java.lesson3;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Group {
 	private int groupNumber;
@@ -16,9 +17,59 @@ public class Group {
 		super();
 	}
 
-	public Student getStudentBySurname(String surname) {
+	public Student[] sortStudentsBySurname() {
+		Student[] sortedStudentsBySurname = getArrayWithoutNulls(groupOfStudents);
+		Student tempStudent;
+		/*
+		 * String.compareTo(String) : Abbaa Gamma = -6 Gamma Betta = 5
+		 */
+		for (int y = sortedStudentsBySurname.length - 1; y > 0; y--) {
+			for (int x = 0; x < y; x++) {
+				int i = sortedStudentsBySurname[x].getSurname().compareTo(sortedStudentsBySurname[x + 1].getSurname());
+				if (i > 0) {
+					tempStudent = sortedStudentsBySurname[x + 1];
+					sortedStudentsBySurname[x + 1] = sortedStudentsBySurname[x];
+					sortedStudentsBySurname[x] = tempStudent;
+				}
+			}
+		}
+		for (Student student : sortedStudentsBySurname)
+			System.out.println(student.toString());
+		return sortedStudentsBySurname;
+	}
 
-		return new Student();
+	private Student[] getArrayWithoutNulls(Student[] arrayWithNulls) {
+		int arrayWithoutNullsLength = 0;
+		for (Student st : arrayWithNulls) {
+			if (st != null) {
+				arrayWithoutNullsLength++;
+			}
+		}
+		Student[] arrayWithoutNulls = new Student[arrayWithoutNullsLength];
+		int y = 0;
+		for (int x = 0; x < arrayWithNulls.length; x++) {
+			if (arrayWithNulls[x] != null) {
+				arrayWithoutNulls[y++] = arrayWithNulls[x];
+			}
+		}
+		return arrayWithoutNulls;
+	}
+
+	public List<Student> getStudentsBySurname(String surname) {
+		List<Student> foundStudentsBySurname = new ArrayList<Student>();
+		Boolean isStudentsDetected = false;
+		for (Student student : groupOfStudents) {
+			if (student != null) {
+				if (student.getSurname() == surname) {
+					foundStudentsBySurname.add(student);
+					isStudentsDetected = true;
+				}
+			}
+		}
+		if (!isStudentsDetected) {
+			System.out.println("—тудентов по заданному параметру не обнаружено.");
+		}
+		return foundStudentsBySurname;
 	}
 
 	public void addStudent(Student newStudent) {
@@ -31,7 +82,6 @@ public class Group {
 				System.out.println(ex.getMessage());
 			}
 		}
-
 	}
 
 	private Boolean isStudentAlreadyIn(Student checkedStudent) {
@@ -42,11 +92,10 @@ public class Group {
 				}
 			}
 		}
-
 		return false;
 	}
 
-	public void putUniqueStudentToGroup(Student newStudent) throws ManyStudentsException {
+	private void putUniqueStudentToGroup(Student newStudent) throws ManyStudentsException {
 		int counterFirstFreeSpaceInGroup = -1;
 		int counterStudentInGroup = 0;
 		for (Student student : groupOfStudents) {
@@ -87,8 +136,6 @@ public class Group {
 				groupOfStudent += student.toString() + "\n";
 			}
 		}
-
 		return groupOfStudent;
 	}
-
 }
